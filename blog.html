@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLOG ｜ しろあるき</title>
+<meta name="description" content="日本各地の城をめぐる記録サイト「しろあるき」の日記。訪れた城で気づいたことを日付順に。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gray-bg:      #4b4a45;
+    --gray-bg-deep: #3d3c38;
+    --gray-line:    #605f58;
+    --paper:        #ede7d8;
+    --paper-dim:    #ddd6c3;
+    --ink:          #3a362e;
+    --ink-soft:     #6b6558;
+    --green:        #4a6956;
+    --green-deep:   #2f4439;
+    --green-pale:   #9bb3a3;
+    --gold:         #a98e56;
+
+    --wall-w: 56px;
+    --wall-w-m: 20px;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+
+  body{
+    background: var(--gray-bg);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 64px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.035) 0px, rgba(0,0,0,0.035) 1px, transparent 1px, transparent 64px);
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3,.brand,.page-title{
+    font-family: "Shippori Mincho", serif;
+  }
+
+  .wall{
+    position: fixed;
+    top:0; bottom:0;
+    width: var(--wall-w);
+    background: var(--green);
+    background-image: linear-gradient(180deg, var(--green-deep), var(--green) 12%, var(--green) 88%, var(--green-deep));
+    z-index: 40;
+  }
+  .wall::after{
+    content:"";
+    position:absolute; top:0; bottom:0;
+    width: 6px;
+    background: var(--green-deep);
+    opacity:.55;
+  }
+  .wall.left{ left:0; }
+  .wall.left::after{ right:0; }
+  .wall.right{ right:0; }
+  .wall.right::after{ left:0; }
+
+  .page{
+    margin: 0 var(--wall-w);
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  header{
+    padding: 28px clamp(20px, 5vw, 64px) 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .brand{
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--paper);
+    letter-spacing: .06em;
+    text-decoration:none;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .brand small{
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    font-size:.62rem;
+    font-weight:500;
+    color: var(--green-pale);
+    letter-spacing:.16em;
+  }
+  nav.main ul{
+    list-style:none;
+    display:flex;
+    gap: clamp(18px, 3vw, 40px);
+    margin:0; padding:0;
+  }
+  nav.main a{
+    color: var(--paper-dim);
+    text-decoration:none;
+    font-size: .98rem;
+    letter-spacing:.04em;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: border-color .2s, color .2s;
+  }
+  nav.main a:hover,
+  nav.main a:focus-visible{
+    color: var(--paper);
+    border-color: var(--green-pale);
+  }
+  nav.main a[aria-current="page"]{
+    color: var(--paper);
+    border-color: var(--gold);
+  }
+
+  /* ---- ページ見出し ---- */
+  .page-head{
+    padding: clamp(40px, 6vw, 64px) clamp(20px, 5vw, 64px) clamp(28px, 4vw, 40px);
+  }
+  .page-head .eyebrow{
+    color: var(--green-pale);
+    font-size:.85rem;
+    letter-spacing:.1em;
+    margin: 0 0 12px;
+  }
+  .page-title{
+    color: var(--paper);
+    font-size: clamp(1.8rem, 3.4vw, 2.4rem);
+    font-weight: 800;
+    margin: 0 0 14px;
+  }
+  .page-head p{
+    color: var(--paper-dim);
+    max-width: 56ch;
+    margin:0;
+  }
+
+  .stone-divider{
+    height: 22px;
+    background:
+      linear-gradient(135deg, transparent 45%, var(--gray-line) 45%, var(--gray-line) 55%, transparent 55%),
+      linear-gradient(45deg, transparent 45%, var(--gray-line) 45%, var(--gray-line) 55%, transparent 55%);
+    background-size: 32px 32px;
+    background-position: 0 0, 16px 0;
+    opacity:.5;
+  }
+
+  /* ---- 日記本体 ---- */
+  .diary{
+    background: var(--paper);
+    flex: 1;
+    padding: clamp(48px, 7vw, 80px) clamp(20px, 5vw, 64px) clamp(64px, 8vw, 96px);
+  }
+  .diary-list{
+    max-width: 760px;
+    margin: 0 auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .diary-entry{
+    padding: 34px 0;
+    border-bottom: 1px dashed var(--paper-dim);
+  }
+  .diary-entry:first-child{ padding-top:0; }
+  .diary-entry time{
+    display:block;
+    color: var(--green);
+    font-family:"Shippori Mincho", serif;
+    font-size: 1rem;
+    letter-spacing:.06em;
+    margin-bottom: 12px;
+  }
+  .diary-entry p{
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .diary-entry p:last-child{ margin-bottom:0; }
+
+  .load-more{
+    text-align:center;
+    margin-top: 44px;
+  }
+  .load-more a{
+    display:inline-block;
+    padding: 11px 28px;
+    border: 1px solid var(--ink-soft);
+    color: var(--ink-soft);
+    text-decoration:none;
+    font-size:.9rem;
+    border-radius:2px;
+  }
+  .load-more a:hover{
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  /* ---- フッター ---- */
+  footer{
+    background: var(--gray-bg-deep);
+    padding: clamp(40px, 6vw, 60px) clamp(20px, 5vw, 64px) 36px;
+    color: var(--paper-dim);
+  }
+  .footer-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--gray-line);
+  }
+  .footer-grid h4{
+    color: var(--green-pale);
+    font-size:.82rem;
+    letter-spacing:.1em;
+    margin: 0 0 14px;
+    font-weight:500;
+  }
+  .footer-grid ul{
+    list-style:none; margin:0; padding:0;
+  }
+  .footer-grid li{ margin-bottom: 8px; }
+  .footer-grid a{
+    color: var(--paper-dim);
+    text-decoration:none;
+    font-size:.92rem;
+  }
+  .footer-grid a:hover{ color: var(--paper); }
+  .footer-grid p{ font-size:.88rem; margin:0 0 14px; max-width:34ch; }
+  .footer-form{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+  }
+  .footer-form input[type="email"]{
+    flex:1;
+    min-width:0;
+    padding: 9px 12px;
+    border:1px solid var(--gray-line);
+    background: transparent;
+    color: var(--paper);
+    font-size:.85rem;
+    border-radius:2px;
+  }
+  .footer-form button{
+    padding: 9px 16px;
+    border:none;
+    background: var(--green);
+    color: var(--paper);
+    font-size:.85rem;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  .footer-form button:hover{ background: var(--green-deep); }
+  .footer-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    padding-top: 22px;
+    font-size:.78rem;
+    color: var(--ink-soft);
+  }
+  .footer-bottom .ai-notice{
+    max-width: 52ch;
+  }
+
+  @media (max-width: 640px){
+    :root{ --wall-w: var(--wall-w-m); }
+    header{ flex-direction:column; align-items:flex-start; gap:14px; }
+    nav.main ul{ gap:16px; flex-wrap:wrap; }
+    .footer-grid{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wall left" aria-hidden="true"></div>
+<div class="wall right" aria-hidden="true"></div>
+
+<div class="page">
+
+  <header>
+    <a href="index.html" class="brand">しろあるき <small>SHIRO ARUKI</small></a>
+    <nav class="main" aria-label="メインナビゲーション">
+      <ul>
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="blog.html" aria-current="page">BLOG</a></li>
+        <li><a href="gallery.html">GALLERY</a></li>
+        <li><a href="about.html">ABOUT</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="page-head">
+    <p class="eyebrow">DIARY</p>
+    <h1 class="page-title">日記</h1>
+    <p>訪れた城で気づいたことを、その日のうちに書き留めています。新しい記録が上に来ます。</p>
+  </section>
+
+  <div class="stone-divider" aria-hidden="true"></div>
+
+  <section class="diary">
+    <div class="diary-list">
+
+      <article class="diary-entry">
+        <time datetime="2026-08-30">2026.08.30</time>
+        <p>丸亀城。日本一高いという石垣を下から見上げると、思っていたより角度が急で首が痛くなった。段になって積まれているせいで、実際の高さより威圧感が強く感じる。天守は小さいのに、石垣だけで十分お腹いっぱいになる城だった。</p>
+      </article>
+
+      <article class="diary-entry">
+        <time datetime="2026-08-12">2026.08.12</time>
+        <p>松山城、ロープウェイもリフトもあるのに、あえて歩いて登った。石段の途中で振り返ると松山の街並みが少しずつ広がっていくのが良い。帰りはリフトにしたら、行きの疲れが一瞬でどうでもよくなった。</p>
+      </article>
+
+      <article class="diary-entry">
+        <time datetime="2026-07-21">2026.07.21</time>
+        <p>彦根城、天秤櫓の下で急に雨。屋根の出っ張りにちょうど収まる位置があって、昔の人もここで雨宿りしたのかもと考えながら15分ほど空を眺めていた。雨上がりの石垣は色が濃くなって、いつもより表情がはっきりする。</p>
+      </article>
+
+      <article class="diary-entry">
+        <time datetime="2026-06-30">2026.06.30</time>
+        <p>竹田城、雲海には出会えなかったけれど、朝一番の静けさは十分だった。石垣だけが残る「日本のマチュピチュ」という呼び方は少し大げさな気もするけれど、確かに山の稜線に沿って石垣が続く様子は独特。</p>
+      </article>
+
+      <article class="diary-entry">
+        <time datetime="2026-06-08">2026.06.08</time>
+        <p>姫路城、白すぎて逆に写真だと立体感が出にくい。実際に近づいてみると、瓦の重なりと壁の白さのコントラストが本当にきれいで、しばらく同じ場所から動けなかった。中の急な階段は靴を脱いで上るタイプで、これは修行に近い。</p>
+      </article>
+
+    </div>
+
+    <div class="load-more">
+      <a href="#">もっと読む</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>SHIRO ARUKI</h4>
+        <p>日本の城をめぐる個人の記録サイトです。ご感想・情報提供はお気軽にどうぞ。</p>
+        <form class="footer-form" action="https://formspree.io/f/maqvpvoz" method="POST">
+          <label for="footer-email" class="visually-hidden" style="position:absolute;left:-9999px;">メールアドレス</label>
+          <input id="footer-email" type="email" name="email" placeholder="メールアドレス" required>
+          <button type="submit">送信</button>
+        </form>
+      </div>
+      <div>
+        <h4>MENU</h4>
+        <ul>
+          <li><a href="index.html">HOME</a></li>
+          <li><a href="blog.html">BLOG</a></li>
+          <li><a href="gallery.html">GALLERY</a></li>
+          <li><a href="about.html">ABOUT</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>AZALEA CREATIVE ROOM</h4>
+        <ul>
+          <li><a href="#">サイト一覧へ戻る</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="ai-notice">当サイトの文章・画像は生成AIの学習データとしての利用を禁じます。</p>
+      <p>&copy; 2026 しろあるき</p>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
